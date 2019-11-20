@@ -1,0 +1,25 @@
+[package]
+name = "token-website"
+version = "0.1.0"
+authors = ["Michael Lodder <redmike7@gmail.com>"]
+edition = "2018"
+
+[dependencies.dirs]
+version = "2.0"
+
+[dependencies.lox]
+version = "0.3"
+path = "../lox/lox"
+
+[dependencies.rpassword]
+version = "4.0"
+
+[dependencies.serde]
+version = "1.0"
+features = ["derive"]
+
+[dependencies.structopt]
+version = "0.3"
+
+[dependencies.toml]
+version = "0.5.5"
