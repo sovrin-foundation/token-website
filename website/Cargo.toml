@@ -4,22 +4,17 @@ version = "0.1.0"
 authors = ["Michael Lodder <redmike7@gmail.com>"]
 edition = "2018"
 
-[dependencies.dirs]
-version = "2.0"
-
-[dependencies.lox]
-version = "0.3"
-path = "../lox/lox"
-
-[dependencies.rpassword]
-version = "4.0"
-
-[dependencies.serde]
-version = "1.0"
-features = ["derive"]
-
-[dependencies.structopt]
-version = "0.3"
-
-[dependencies.toml]
-version = "0.5.5"
+[dependencies]
+async-std = "1.1.0"
+celes = "1.0"
+dirs = "2.0"
+lazy_static = "1.4"
+lox = { version = "0.3", path = "../lox/lox" }
+rocket = "0.4"
+rocket_contrib = { version = "0.4", default-features =  false, features = ["serve", "helmet"] }
+rpassword = "4.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+structopt = "0.3"
+toml = "0.5"
+trulioo = { version = "0.1", path = "../trulioo" }

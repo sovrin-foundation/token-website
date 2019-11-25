@@ -6,43 +6,47 @@ use serde::{Serialize, Deserialize};
 pub struct Config {
     pub port: u16,
     pub secret_backend: Option<SecretBackend>,
-    pub truiloo: Option<Truiloo>
+    pub trulioo: Option<Trulioo>
 }
 
 impl Default for Config {
     fn default() -> Self {
         Config {
-            port: 5000,
+            port: 8000,
             secret_backend: None,
-            truiloo: None
+            trulioo: None
         }
     }
 }
 
 impl From<&Opt> for Config {
     fn from(opt: &Opt) -> Self {
-        let mut truiloo = None;
-        if let Some(name) = &opt.truilooapikeyname {
-            truiloo = Some(Truiloo {
-                name: Some(name.to_string()),
-                value: None
+        let mut trulioo = None;
+        let url = opt.truliooapiurl.clone().unwrap_or(String::new());
+        if let Some(name) = &opt.truliooapikeyname {
+            trulioo = Some(Trulioo {
+                key_name: Some(name.to_string()),
+                key_value: None,
+                url
             });
-        } else if let Some(value) = &opt.truilooapikeyvalue {
-            truiloo = Some(Truiloo {
-                name: None,
-                value: Some(value.to_string())
+        } else if let Some(value) = &opt.truliooapikeyvalue {
+            trulioo = Some(Trulioo {
+                key_name: None,
+                key_value: Some(value.to_string()),
+                url
             });
         }
         Config {
             port: opt.port,
             secret_backend: opt.secretbackend,
-            truiloo
+            trulioo
         }
     }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Truiloo {
-    pub name: Option<String>,
-    pub value: Option<String>
+pub struct Trulioo {
+    pub key_name: Option<String>,
+    pub key_value: Option<String>,
+    pub url: String
 }

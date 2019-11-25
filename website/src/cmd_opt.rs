@@ -11,12 +11,14 @@ use structopt::StructOpt;
 pub struct Opt {
     #[structopt(short, long, parse(from_os_str))]
     pub config: Option<PathBuf>,
-    #[structopt(short, long, default_value = "5000")]
+    #[structopt(short, long, default_value = "8000")]
     pub port: u16,
     #[structopt(short, long)]
     pub secretbackend: Option<SecretBackend>,
+    #[structopt(short = "u", long)]
+    pub truliooapiurl: Option<String>,
     #[structopt(short = "n", long)]
-    pub truilooapikeyname: Option<String>,
+    pub truliooapikeyname: Option<String>,
     #[structopt(short = "k", long)]
-    pub truilooapikeyvalue: Option<String>,
+    pub truliooapikeyvalue: Option<String>,
 }

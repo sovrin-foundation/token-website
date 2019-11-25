@@ -1,5 +1,5 @@
 [package]
-name = "truiloo"
+name = "trulioo"
 version = "0.1.0"
 authors = ["Michael Lodder <redmike7@gmail.com>"]
 edition = "2018"
@@ -12,5 +12,5 @@ serde_json = { version = "1.0", features = ["preserve_order"] }
 zeroize = { version = "1.0", features = ["zeroize_derive"] }
 
 [dev-dependencies]
-async-std = "0.99"
+async-std = "1.1.0"
 toml = "0.5"

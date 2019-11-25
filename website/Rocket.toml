@@ -1,0 +1,5 @@
+[global]
+address = "127.0.0.1"
+
+[global.limits]
+forms = 33554432

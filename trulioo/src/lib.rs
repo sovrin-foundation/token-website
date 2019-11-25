@@ -33,24 +33,6 @@ pub enum DocumentTypes {
     ResidencePermit
 }
 
-/// Derived from https://www.iban.com/country-codes
-/// ISO3166-1
-#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
-pub enum Alpha2Code {
-    AU,
-    AT,
-    DK,
-    NO,
-    SE,
-    TR,
-    BR,
-    BE,
-    DE,
-    NL,
-    GB,
-    US
-}
-
 #[derive(Clone, Debug, Zeroize)]
 #[zeroize(drop)]
 pub struct TruliooRequest {
@@ -214,6 +196,12 @@ impl TruliooRequest {
             .await
             .map_err(|e| format!("{:?}", e))?;
         Ok(body)
+    }
+}
+
+impl Default for TruliooRequest {
+    fn default() -> Self {
+        TruliooRequest { key: String::new(), url: String::new() }
     }
 }
 
