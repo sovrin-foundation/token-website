@@ -1,3 +1,6 @@
 [submodule "lox"]
 	path = lox
 	url = https://github.com/mikelodder7/lox
+[submodule "libsovtoken"]
+	path = libsovtoken
+	url = git@github.com:sovrin-foundation/libsovtoken.git
