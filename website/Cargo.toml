@@ -16,7 +16,7 @@ lazy_static = "1.4"
 lox = { version = "0.3", path = "../lox/lox" }
 rand = "0.7"
 rocket = "0.4"
-rocket_contrib = { version = "0.4", default-features =  false, features = ["serve", "helmet"] }
+rocket_contrib = { version = "0.4", default-features =  false, features = ["serve", "helmet", "json"] }
 rpassword = "4.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

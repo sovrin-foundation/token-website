@@ -17,5 +17,6 @@ Cargo.lock
 /target
 website/target
 trulioo/target
+website-api-tester/target
 .idea
 #**/*.rs.bk

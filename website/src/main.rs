@@ -16,6 +16,7 @@ mod cmd_opt;
 mod config;
 mod secret_backend;
 mod consents;
+mod responses;
 
 use celes::Country;
 use cmd_opt::Opt;
@@ -23,9 +24,12 @@ use config::Config;
 use hmac::{Hmac, Mac};
 use lox::prelude::*;
 use rand::RngCore;
-use rocket::State;
+use rocket::{
+    State
+};
 use rocket_contrib::{
     helmet::SpaceHelmet,
+    json::Json,
     serve::StaticFiles,
 };
 use secret_backend::SecretBackend;
@@ -48,13 +52,6 @@ const TOKEN_WEBSITE_SERVICE: &str = "token_website";
 const TRULIOO_SERVICE: &str = "trulioo";
 
 type HmacSha256 = Hmac<Sha256>;
-
-#[derive(Deserialize)]
-struct PaymentAddressChallengeReponse {
-    address: String,
-    challenge: String,
-    signature: String
-}
 
 #[get("/countries")]
 pub(crate) fn get_allowed_countries(countries: State<BTreeMap<String, Country>>) -> String {
@@ -102,15 +99,11 @@ pub(crate) fn get_payment_address_challenge(challenge_signing_key: State<Vec<u8>
 }
 
 #[post("/payment_address_challenge", format = "application/json", data = "<challenge>")]
-pub(crate) fn receive_payment_address_challenge(challenge: String, challenge_signing_key: State<Vec<u8>>) -> String {
+pub(crate) fn receive_payment_address_challenge(challenge: Json<responses::PaymentAddressChallengeResponse>, challenge_signing_key: State<Vec<u8>>) -> String {
     const TIMESTAMP: usize = 8;
     const NONCE: usize = 32;
     const EXPIRE: u64 = 3600;
-    let response: PaymentAddressChallengeReponse;
-    match serde_json::from_str(&challenge) {
-        Err(why) => return format!(r#"{{ "status": "error", "message": {} }}"#, why.description()),
-        Ok(r) => response = r
-    };
+    let response = challenge.into_inner();
 
     let challenge = match base64_url::decode(&response.challenge) {
         Err(why) => return format!(r#"{{ "status": "error", "message": {} }}"#, why.description()),
