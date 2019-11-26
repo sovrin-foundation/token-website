@@ -9,12 +9,16 @@ use structopt::StructOpt;
     about = "Sovrin Foundation Token Website"
 )]
 pub struct Opt {
+    #[structopt(short = "i", long)]
+    pub challenge_signing_key: Option<String>,
     #[structopt(short, long, parse(from_os_str))]
     pub config: Option<PathBuf>,
     #[structopt(short, long, default_value = "8000")]
     pub port: u16,
     #[structopt(short, long)]
     pub secretbackend: Option<SecretBackend>,
+    #[structopt(short, long)]
+    pub test: bool,
     #[structopt(short = "u", long)]
     pub truliooapiurl: Option<String>,
     #[structopt(short = "n", long)]

@@ -6,9 +6,11 @@
 //        trivial_casts,
 //        trivial_numeric_casts)]
 #[macro_use]
-extern crate rocket;
+extern crate arrayref;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate rocket;
 
 mod cmd_opt;
 mod config;
@@ -17,79 +19,158 @@ mod consents;
 
 use celes::Country;
 use cmd_opt::Opt;
-use config::{Config, Trulioo};
+use config::Config;
+use hmac::{Hmac, Mac};
 use lox::prelude::*;
-use rocket::{
-    response::status,
-    State
-};
+use rand::RngCore;
+use rocket::State;
 use rocket_contrib::{
     helmet::SpaceHelmet,
     serve::StaticFiles,
 };
 use secret_backend::SecretBackend;
-use serde::Serialize;
-use std::collections::BTreeMap;
-use std::fs::File;
-use std::io::Read;
-use std::process::exit;
-use std::str::FromStr;
+use serde::{Deserialize, Serialize};
+use sha2::{Sha256, Digest};
+use std::{
+    collections::BTreeMap,
+    error::Error,
+    fs,
+    io::Write,
+    path::PathBuf,
+    str::FromStr,
+    time::{SystemTime, UNIX_EPOCH}
+};
 use structopt::StructOpt;
+use subtle::ConstantTimeEq;
 use trulioo::TruliooRequest;
 
 const TOKEN_WEBSITE_SERVICE: &str = "token_website";
 const TRULIOO_SERVICE: &str = "trulioo";
 
+type HmacSha256 = Hmac<Sha256>;
+
+#[derive(Deserialize)]
+struct PaymentAddressChallengeReponse {
+    address: String,
+    challenge: String,
+    signature: String
+}
+
 #[get("/countries")]
 pub(crate) fn get_allowed_countries(countries: State<BTreeMap<String, Country>>) -> String {
     #[derive(Serialize)]
     struct SimpleCountry {
-        value: usize,
+        alpha2: String,
         long_name: String
     };
-    let list = countries.inner().iter().map(|(_, c)| SimpleCountry { value: c.value, long_name: c.long_name.to_string() }).collect::<Vec<SimpleCountry>>();
-    serde_json::to_string(&list).unwrap()
+    let list = countries.inner().iter().map(|(_, c)| SimpleCountry { alpha2: c.alpha2.to_string(), long_name: c.long_name.to_string() }).collect::<Vec<SimpleCountry>>();
+    format!(r#"{{ "status": "success", "result": {} }}"#, serde_json::to_string(&list).unwrap())
 }
 
-#[get("/consents/<country_value>")]
-pub(crate) fn get_consents(country_value: usize, request: State<TruliooRequest>) -> String {
-    let country;
-
-    match Country::from_value(country_value) {
-        Ok(c) => country = c,
-        Err(e) => return format!("{{ error: {} }}", e)
-    };
+#[get("/consents/<country>")]
+pub(crate) fn get_consents(country: String, request: State<TruliooRequest>, countries: State<BTreeMap<String, Country>>) -> String {
+    if !countries.inner().contains_key(&country) {
+        return format!(r#"{{ "status": "error", "message": {} }}"#, "Invalid country code");
+    }
 
     let mut consents = Ok(Vec::new());
     async_std::task::block_on(async {
-       consents = request.inner().get_detailed_consents(country.alpha2).await
+       consents = request.inner().get_detailed_consents(country).await
     });
     match consents {
-        Ok(c) => serde_json::to_string(&c).unwrap(),
-        Err(e) => format!("{{ error: {} }}", e)
+        Ok(c) => format!(r#"{{ "status": "success", "result": {} }}"#, serde_json::to_string(&c).unwrap()),
+        Err(e) => format!(r#"{{ "status": "error", "message": {} }}"#, e)
     }
+}
+
+#[get("/payment_address_challenge")]
+pub(crate) fn get_payment_address_challenge(challenge_signing_key: State<Vec<u8>>) -> String {
+    let mut rng = rand::rngs::OsRng{};
+    let mut result = generate_timestamp().unwrap().to_be_bytes().to_vec();
+    let mut challenge = vec![0u8; 32];
+    rng.fill_bytes(challenge.as_mut_slice());
+
+    let mut hmac = HmacSha256::new_varkey(&challenge_signing_key.inner().as_slice()).unwrap();
+    hmac.input(result.as_slice());
+    hmac.input(challenge.as_slice());
+    let hash = hmac.result().code();
+
+    result.extend_from_slice(challenge.as_slice());
+    result.extend_from_slice(hash.as_slice());
+
+    format!(r#"{{ "status": "success", "result": "{}" }}"#, base64_url::encode(result.as_slice()))
+}
+
+#[post("/payment_address_challenge", format = "application/json", data = "<challenge>")]
+pub(crate) fn receive_payment_address_challenge(challenge: String, challenge_signing_key: State<Vec<u8>>) -> String {
+    const TIMESTAMP: usize = 8;
+    const NONCE: usize = 32;
+    const EXPIRE: u64 = 3600;
+    let response: PaymentAddressChallengeReponse;
+    match serde_json::from_str(&challenge) {
+        Err(why) => return format!(r#"{{ "status": "error", "message": {} }}"#, why.description()),
+        Ok(r) => response = r
+    };
+
+    let challenge = match base64_url::decode(&response.challenge) {
+        Err(why) => return format!(r#"{{ "status": "error", "message": {} }}"#, why.description()),
+        Ok(c) => c,
+    };
+
+    let signature = match base64_url::decode(&response.signature) {
+        Err(why) => return format!(r#"{{ "status": "error", "message": {} }}"#, why.description()),
+        Ok(s) => s,
+    };
+
+    let timestamp = u64::from_be_bytes(*array_ref!(challenge, 0, TIMESTAMP));
+
+    if timestamp + EXPIRE < generate_timestamp().unwrap() {
+        return format!(r#"{{ "status": "error", "message": "Challenge has expired" }}"#);
+    }
+
+    let mut hmac = HmacSha256::new_varkey(&challenge_signing_key.inner().as_slice()).unwrap();
+    hmac.input(&challenge[..(TIMESTAMP + NONCE)]);
+    let expected_tag = hmac.result().code();
+
+    //Check if this is a challenge from here
+    if expected_tag.ct_eq(&challenge[(TIMESTAMP + NONCE)..]).unwrap_u8() == 1 {
+        return format!(r#"{{ "status": "error", "message": "Invalid challenge" }}"#);
+    }
+
+    let unqualified = match sovtoken::logic::address::unqualified_address_from_address(&response.address) {
+        Err(_) => return format!(r#"{{ "status": "error", "message": "Invalid address" }}"#),
+        Ok(r) => r,
+    };
+    let verkey = match sovtoken::logic::address::verkey_from_unqualified_address(&unqualified) {
+        Err(_) => return format!(r#"{{ "status": "error", "message": "Address is not a valid key" }}"#),
+        Ok(r) => r,
+    };
+
+    let mut result = String::new();
+    async_std::task::block_on(async {
+        use indyrs::future::Future;
+        let mut sha = Sha256::new();
+        sha.input(format!("\x6DSovrin Signed Message:\nLength: {}\n", challenge.len()).as_bytes());
+        sha.input(challenge.as_slice());
+        let digest = sha.result();
+
+        match indyrs::payments::verify_with_address(&verkey, digest.as_slice(), signature.as_slice()).wait() {
+            Err(_) => result = format!(r#"{{ "status": "error", "message": "Unable to verify signature" }}"#),
+            Ok(b) => if b {
+                result = format!(r#"{{ "status": "success", "result": true }}"#)
+            } else {
+                result = format!(r#"{{ "status": "error", "message": "Invalid signature" }}"#)
+            }
+        }
+    });
+    result
 }
 
 fn main() {
     let opt = Opt::from_args();
     let config = get_config(&opt);
 
-    let (url, key);
-    if let Some(ref t) = config.trulioo {
-        url = t.url.clone();
-        if let Some(key_name) = &t.key_name {
-            key = std::str::from_utf8(&get_trulioo_secret(&key_name, config.secret_backend)).unwrap().to_string();
-        } else if let Some(key_value) = &t.key_value {
-            key = t.key_value.clone().unwrap();
-        } else {
-            key = prompt_for_value(trulioo::API_KEY_HEADER);
-        }
-    } else {
-        url = prompt_for_value("trulioo api url");
-        key = prompt_for_value(trulioo::API_KEY_HEADER);
-    }
-
-    let request = TruliooRequest { key, url };
+    let request = get_trulioo_request(&config);
     let mut countries = BTreeMap::new();
 
     async_std::task::block_on(async {
@@ -100,16 +181,61 @@ fn main() {
             }
         }
     });
+
+    let mut home = PathBuf::new();
+    home.push(env!("HOME"));
+    home.push(".token-website");
+    if !home.exists() {
+        fs::create_dir_all(home.clone()).unwrap();
+    }
+    home.push("config");
+
+    if !home.exists() {
+        let mut file = match fs::File::create(&home) {
+            Err(why) => panic!("Couldn't create {:?}: {}", home, why.description()),
+            Ok(file) => file
+        };
+        println!("config = {:?}", config);
+        let recipe_toml = toml::Value::try_from(&config).unwrap();
+        let contents = toml::to_string(&recipe_toml).unwrap();
+        println!("contents = {}", contents);
+        if let Err(why) = file.write_all(contents.as_bytes()) {
+            panic!("Unable to write to {:?}: {}", home, why.description());
+        }
+    }
+
     rocket::ignite()
-            .attach(SpaceHelmet::default())
-            .manage(request)
-            .manage(countries)
-            .mount("/", StaticFiles::from("/public"))
-            .mount("/api/v1", routes![get_allowed_countries, get_consents]).launch();
+        .attach(SpaceHelmet::default())
+        .manage(countries)
+        .manage(base64_url::decode(&config.keys.challenge_signing_key).unwrap())
+        .manage(request)
+        .mount("/", StaticFiles::from("/public"))
+        .mount("/api/v1", routes![get_allowed_countries,
+                                      get_consents,
+                                      get_payment_address_challenge]).launch();
+}
+
+fn get_trulioo_request(config: &Config) -> TruliooRequest {
+    let (url, key);
+    if let Some(ref t) = config.trulioo {
+        url = t.url.clone();
+        if let Some(key_name) = &t.key_name {
+            key = std::str::from_utf8(&get_trulioo_secret(&key_name, config.secret_backend)).unwrap().to_string();
+        } else if let Some(key_value) = &t.key_value {
+            key = key_value.clone();
+        } else {
+            key = prompt_for_value(trulioo::API_KEY_HEADER);
+        }
+    } else {
+        url = prompt_for_value("trulioo api url");
+        key = prompt_for_value(trulioo::API_KEY_HEADER);
+    }
+
+    TruliooRequest { key, url }
 }
 
 fn get_trulioo_secret(key_name: &str, secret_backend: Option<SecretBackend>) -> Vec<u8> {
-    let mut apikey = Vec::new();
+    let apikey;
     if let Some(backend) = secret_backend {
         match backend {
             SecretBackend::OsKeyRing => {
@@ -117,13 +243,11 @@ fn get_trulioo_secret(key_name: &str, secret_backend: Option<SecretBackend>) -> 
                 apikey = keyring.get_secret(key_name).unwrap().as_slice().to_vec();
             },
             _ => {
-                eprintln!("{} not handled", backend);
-                exit(1);
+                panic!("{} not handled", backend);
             }
         }
     } else {
-        eprintln!("trulioo name cannot be used without a secret backend");
-        exit(1);
+        panic!("trulioo name cannot be used without a secret backend");
     }
     apikey
 }
@@ -133,35 +257,23 @@ fn get_config(opt: &Opt) -> Config {
     match &opt.config {
         Some(c) => {
             if !c.exists() || !c.is_file() {
-                eprintln!("The config file does not exist: '{:?}'", c);
-                exit(1);
+                panic!("The config file does not exist: '{:?}'", c);
             }
-            match File::open(c) {
-                Ok(mut f) => {
-                    let mut contents = String::new();
-                    match f.read_to_string(&mut contents) {
-                        Ok(_) => {
-                            match toml::from_str(contents.as_str()) {
-                                Ok(g) => config = g,
-                                Err(e) => {
-                                    eprintln!("An error occurred while parsing '{:?}': {}", c, e);
-                                    exit(1);
-                                }
-                            }
-                        },
-                        Err(e) => {
-                            eprintln!("An error occurred while reading '{:?}': {}", c, e);
-                            exit(1);
-                        }
-                    }
-                },
-                Err(e) => {
-                    eprintln!("An error occurred while opening '{:?}': {}", c, e);
-                    exit(1);
+
+            match fs::read_to_string(c) {
+                Err(why) => panic!("Unable to read {:?}: {}", c, why.description()),
+                Ok(contents) => {
+                    config = match toml::from_str(contents.as_str()) {
+                        Ok(f) => f,
+                        Err(e) => panic!("An error occurred while parsing '{:?}': {}", c, e.description())
+                    };
                 }
-            }
+            };
+            config.copy_from_opt(opt);
         },
-        None => config = opt.into()
+        None => {
+            config = get_home_config(opt);
+        }
     };
 
     config
@@ -178,9 +290,37 @@ fn prompt_for_value(value_name: &str) -> String {
                 }
             },
             Err(e) => {
-                eprintln ! ("An error occurred while reading {}: {}", value_name, e);
-                exit(1);
+                panic ! ("An error occurred while reading {}: {}", value_name, e);
             }
         };
     }
+}
+
+fn get_home_config(opt: &Opt) -> Config {
+    let mut home = PathBuf::new();
+    home.push(env!("HOME"));
+    home.push(".token-website");
+    if !home.exists() {
+        fs::create_dir_all(home.clone()).unwrap();
+    }
+    home.push("config");
+    let mut config: Config;
+    if home.exists() {
+        let config_temp = match fs::read_to_string(&home) {
+            Err(why) => panic!("Unable to read {:?}: {}", home, why.description()),
+            Ok(c) => c
+        };
+        config = match toml::from_str(&config_temp) {
+            Err(why) => panic!("Unable to parse {:?}: {}", home, why.description()),
+            Ok(t) => t
+        };
+        config.copy_from_opt(opt);
+    } else {
+        config = opt.into();
+    }
+    config
+}
+
+fn generate_timestamp() -> Result<u64, String> {
+    Ok(SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| e.to_string())?.as_secs())
 }

@@ -5,16 +5,25 @@ authors = ["Michael Lodder <redmike7@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-async-std = "1.1.0"
+arrayref = "0.3"
+async-std = "1.1"
+base64-url = "1.1"
 celes = "1.0"
 dirs = "2.0"
+hmac = "0.7"
+indy = "1.12.0-rc-96"
 lazy_static = "1.4"
 lox = { version = "0.3", path = "../lox/lox" }
+rand = "0.7"
 rocket = "0.4"
 rocket_contrib = { version = "0.4", default-features =  false, features = ["serve", "helmet"] }
 rpassword = "4.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+sovtoken = { version = "1.0", path = "../libsovtoken/libsovtoken", package = "libsovtoken" }
+sha2 = "0.8"
 structopt = "0.3"
+subtle = "2.2"
 toml = "0.5"
 trulioo = { version = "0.1", path = "../trulioo" }
+zeroize = "1.0.0"
