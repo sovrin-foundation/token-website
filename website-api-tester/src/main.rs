@@ -37,8 +37,6 @@ struct PaymentAddressChallengeReponse {
 
 
 fn main() {
-    sodiumoxide::init().unwrap();
-
     let opt = Opt::from_args();
     match opt.cmd {
         Command::Sign { key, token } => {
@@ -61,12 +59,12 @@ fn main() {
             let signature = sign_detached(data.as_slice(), &sk);
 
             let response = PaymentAddressChallengeReponse {
-                address: format!("pay:sov:{}", bs58::encode(&pk[..]).into_string()),
+                address: format!("pay:sov:{}", bs58::encode(&pk[..]).with_check().into_string()),
                 challenge: token,
                 signature: base64_url::encode(&signature[..])
             };
 
-            println!("key = {}", bs58::encode(sk).into_string());
+            println!("key = {}", bs58::encode(sk).with_check().into_string());
             println!("response = {}", serde_json::to_string(&response).unwrap());
         }
     }

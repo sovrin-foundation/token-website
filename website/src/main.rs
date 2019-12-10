@@ -21,6 +21,7 @@ mod responses;
 use celes::Country;
 use cmd_opt::Opt;
 use config::Config;
+use ed25519_dalek::{Signature, PublicKey};
 use hmac::{Hmac, Mac};
 use lox::prelude::*;
 use rand::RngCore;
@@ -126,37 +127,34 @@ pub(crate) fn receive_payment_address_challenge(challenge: Json<responses::Payme
     let expected_tag = hmac.result().code();
 
     //Check if this is a challenge from here
-    if expected_tag.ct_eq(&challenge[(TIMESTAMP + NONCE)..]).unwrap_u8() == 1 {
+    if expected_tag.ct_eq(&challenge[(TIMESTAMP + NONCE)..]).unwrap_u8() != 1 {
         return format!(r#"{{ "status": "error", "message": "Invalid challenge" }}"#);
     }
 
-    let unqualified = match sovtoken::logic::address::unqualified_address_from_address(&response.address) {
+    let decodedkey = match bs58::decode(&response.address[8..]).with_check(None).into_vec() {
         Err(_) => return format!(r#"{{ "status": "error", "message": "Invalid address" }}"#),
-        Ok(r) => r,
-    };
-    let verkey = match sovtoken::logic::address::verkey_from_unqualified_address(&unqualified) {
-        Err(_) => return format!(r#"{{ "status": "error", "message": "Address is not a valid key" }}"#),
-        Ok(r) => r,
+        Ok(d) => d,
     };
 
-    let mut result = String::new();
-    async_std::task::block_on(async {
-        use indyrs::future::Future;
-        let mut sha = Sha256::new();
-        sha.input(format!("\x6DSovrin Signed Message:\nLength: {}\n", challenge.len()).as_bytes());
-        sha.input(challenge.as_slice());
-        let digest = sha.result();
+     let pubkey = match PublicKey::from_bytes(decodedkey.as_slice()) {
+        Err(_) => return format!(r#"{{ "status": "error", "message": "Address cannot be converted to a public key" }}"#),
+        Ok(p) => p,
+    };
 
-        match indyrs::payments::verify_with_address(&verkey, digest.as_slice(), signature.as_slice()).wait() {
-            Err(_) => result = format!(r#"{{ "status": "error", "message": "Unable to verify signature" }}"#),
-            Ok(b) => if b {
-                result = format!(r#"{{ "status": "success", "result": true }}"#)
-            } else {
-                result = format!(r#"{{ "status": "error", "message": "Invalid signature" }}"#)
-            }
-        }
-    });
-    result
+    let sig = match Signature::from_bytes(signature.as_slice()) {
+        Err(_) => return format!(r#"{{ "status": "error", "message": "Invalid signature" }}"#),
+        Ok(s) => s,
+    };
+
+    let mut sha = Sha256::new();
+    sha.input(format!("\x6DSovrin Signed Message:\nLength: {}\n", challenge.len()).as_bytes());
+    sha.input(challenge.as_slice());
+    let digest = sha.result();
+
+    match pubkey.verify(digest.as_slice(), &sig) {
+        Err(_) => format!(r#"{{ "status": "success", "result": false }}"#),
+        Ok(_) => format!(r#"{{ "status": "success", "result": true }} "#)
+    }
 }
 
 fn main() {
@@ -205,7 +203,9 @@ fn main() {
         .mount("/", StaticFiles::from("/public"))
         .mount("/api/v1", routes![get_allowed_countries,
                                       get_consents,
-                                      get_payment_address_challenge]).launch();
+                                      get_payment_address_challenge,
+                                      receive_payment_address_challenge
+]).launch();
 }
 
 fn get_trulioo_request(config: &Config) -> TruliooRequest {
