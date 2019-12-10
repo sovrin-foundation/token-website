@@ -131,7 +131,7 @@ pub(crate) fn receive_payment_address_challenge(challenge: Json<responses::Payme
         return format!(r#"{{ "status": "error", "message": "Invalid challenge" }}"#);
     }
 
-    if &response.address[..8] != "pay:sov:" {
+    if response.address.len() < 8 || &response.address[..8] != "pay:sov:" {
         return format!(r#"{{ "status": "error", "message": "Unexpected address type" }}"#);
     }
 
