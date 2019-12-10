@@ -131,6 +131,10 @@ pub(crate) fn receive_payment_address_challenge(challenge: Json<responses::Payme
         return format!(r#"{{ "status": "error", "message": "Invalid challenge" }}"#);
     }
 
+    if &response.address[..8] != "pay:sov:" {
+        return format!(r#"{{ "status": "error", "message": "Unexpected address type" }}"#);
+    }
+
     let decodedkey = match bs58::decode(&response.address[8..]).with_check(None).into_vec() {
         Err(_) => return format!(r#"{{ "status": "error", "message": "Invalid address" }}"#),
         Ok(d) => d,
