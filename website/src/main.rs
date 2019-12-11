@@ -100,7 +100,7 @@ pub(crate) fn get_payment_address_challenge(challenge_signing_key: State<Vec<u8>
 }
 
 #[post("/payment_address_challenge", format = "application/json", data = "<challenge>")]
-pub(crate) fn receive_payment_address_challenge(challenge: Json<responses::PaymentAddressChallengeResponse>, challenge_signing_key: State<Vec<u8>>) -> String {
+pub(crate) fn verify_payment_address_challenge(challenge: Json<responses::PaymentAddressChallengeResponse>, challenge_signing_key: State<Vec<u8>>) -> String {
     const TIMESTAMP: usize = 8;
     const NONCE: usize = 32;
     const EXPIRE: u64 = 3600;
@@ -208,8 +208,7 @@ fn main() {
         .mount("/api/v1", routes![get_allowed_countries,
                                       get_consents,
                                       get_payment_address_challenge,
-                                      receive_payment_address_challenge
-]).launch();
+                                      verify_payment_address_challenge]).launch();
 }
 
 fn get_trulioo_request(config: &Config) -> TruliooRequest {
