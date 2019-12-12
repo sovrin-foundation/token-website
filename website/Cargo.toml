@@ -13,9 +13,8 @@ celes = "1.0"
 dirs = "2.0"
 ed25519-dalek = "1.0.0-pre.3"
 hmac = "0.7"
-indy = "1.12.0-rc-96"
 lazy_static = "1.4"
-lox = { version = "0.3", path = "../lox/lox" }
+lox = { version = "0.4", path = "../lox/lox" }
 rand = "0.7"
 rocket = "0.4"
 rocket_contrib = { version = "0.4", default-features =  false, features = ["serve", "helmet", "json"] }
@@ -27,4 +26,4 @@ structopt = "0.3"
 subtle = "2.2"
 toml = "0.5"
 trulioo = { version = "0.1", path = "../trulioo" }
-zeroize = "1.0.0"
+zeroize = "1.1"
