@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <style>
+            .hidden {
+                display: none;
+            }
+            .visible {
+                display: block;
+            }
+            #country {
+                box-sizing: border-box;
+            }
+            #country:focus {
+                outline: 3px solid #ddd;
+            }
+    </style>
+</head>
+<body>
+    <div class="main container"> 
+        <div id="token_purpose_consent" class="page hidden" data-prev="" data-next="token_what_use_consent">
+            <div class="row justify-content-center">
+                <div class="col-sm-8 mt-4 h4">Who are you buying tokens for?</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8 mt-3">The Sovrin Governance Framework Master Document states:</div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-9 mt-3">"The purpose of the Sovrin Ledger is to provide a decentralized global identity network for self-sovereign identity that serves as the foundation for the Sovrin Network."</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11 mt-3">
+                    In order to provide "Identity for All", the Sovrin Ledger needs to be available to anyone to read or write. This policy, called Public Write Access, which is defined in Sovrin Ledger Access Policies, requires a way to prevent spam or other abusive writes to the Sovrin Ledger.  Thus, the Sovrin Governance Framework has stipulated a small fee for each transaction through the use of a native protocol token. A protocol token is a cryptographic token that enables access to or use of services on a network. In the case of the Sovrin Network, the protocol token is the most practical and effective way of achieving the goal of a global public decentralized network for self-sovereign identity on the internet. Using a protocol token will facilitate increased usage of the network while deterring abuse, improve the network’s efficiency, and strengthen its governance.
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-11 mt-3">
+                    <label><input class="mr-2" type="checkbox" id="token_purpose_consent_value">I understand the purpose of the Sovrin Token is exclusively for use on the Sovrin Network for identity related services.</label>
+                </div>
+            </div>
+        </div>
+        <div id="token_what_use_consent" class="page hidden" data-prev="token_purpose_consent" data-next="token_who_use_consent">
+            <div class="row justify-content-center">
+                <div class="col-sm-8 mt-4 h4">Who are you buying tokens for?</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11 mt-3">
+                    The Sovrin Token has 3 uses on the Sovrin Network:
+                    <ol class="mt-2">
+                        <li>Sovrin Token may be used to pay the Sovrin Foundation for fees to write or endorse transactions that Stewards process to the Ledger. These fees cover the same Ledger-writing activities set forth in the Sovrin Foundation’s current <a href="_blank">fiat-based fee schedule</a>, including writing a public DID, establishing a credential definition for a credential, writing to the revocation registry, and updating the revocation registry. Additionally, the Sovrin Foundation fee schedule is expected to include a small fee for transfers of Tokens on the Ledger.</li>
+                        <li>The Sovrin Token may be used for peer-to-peer value transfer in the network. This function allows issuers, holders, and verifiers to pay each other for value exchange without having to go outside the network. These peer-to-peer Token transfers will be settled as part of a Ledger transaction.</li>
+                        <li>Identity holders may use Tokens to pay issuers for a credential, in amounts to be determined by individual issuers based on demand for their credentials. In this mechanism, the Token payment will be paired with the credential and automatically settled as part of a Ledger transaction.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-11 mt-1">
+                    <label><input class="mr-2" type="checkbox" id="token_what_use_consent_value">I understand there are 3 uses for using the Sovrin Token on the Sovrin Network</label>
+                </div>
+            </div>
+        </div>
+        <div id="token_who_use_consent" class="page hidden" data-prev="token_what_use_consent" data-next="token_amount_consent">
+            <div class="row justify-content-center">
+                <div class="col-sm-8 mt-4 h4">Who are you buying tokens for?</div>
+            </div>
+            <div class="row mt-3 justify-content-center">
+                <div class="col-sm-3 border"><span class="h4">Role</span></div>
+                <div class="col-sm-3 border"><span class="h4">Who</span></div>
+                <div class="col-sm-3 border"><span class="h4">Use</span></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-3 border">Credential Issuer</div>
+                <div class="col-sm-3 border"><p>Business</p><p>Government agencies</p><p>Nonprofits</p></div>
+                <div class="col-sm-3 border">Pay for writes to the ledger for credential definitions, public DIDs, schema, and revocation registries.</div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-3 border">Credential Holder</div>
+                <div class="col-sm-3 border"><p>Business</p><p>Government agencies</p><p>Nonprofits</p><p>Individuals</p></div>
+                <div class="col-sm-3 border">Pay credential issuers for credentials.</div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-3 border">Peer</div>
+                <div class="col-sm-3 border"><p>Business</p><p>Government agencies</p><p>Nonprofits</p><p>Individuals</p></div>
+                <div class="col-sm-3 border">Peer-to-peer value transfer for services within the network.</div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-11 mt-3">
+                    <label><input class="mr-2" type="checkbox" id="token_who_use_consent_value">I understand that I can only use the Sovrin Token as a credential issuer, credential holder or for peer-to-peer services on the Network</label>
+                </div>
+            </div>
+        </div>
+        <div id="token_amount_consent" class="page hidden" data-prev="token_what_use_consent" data-next="token_fiat_consent">
+            <div class="row justify-content-center">
+                <div class="col-sm-8 mt-4 h4">How many Sovrin Tokens do you need?</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9 mt-3">The Sovrin Token enables Identity Owners in the Sovrin Ledger Layer Role of Transaction Authors or Transaction Endorsers to pay the Sovrin Ledger Fee for any particular Transaction Type in Sovrin Tokens at a discount to the published price denominated in US Dollars. </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-11 mt-3">
+                    <label><input class="mr-2" type="checkbox" id="token_amount_consent_value">I understand the amount of tokens I am purchasing is depended on my use as an individual or business and I will only purchase the amount of tokens I require for my particular situation</label>
+                </div>
+            </div>
+        </div>
+        <div id="token_fiat_consent" class="page hidden" data-prev="token_amount_consent" data-next="kyc_consent">
+            <div class="row justify-content-center">
+                <div class="col-sm-8 mt-4 h4">What is the Sovrin FIAT Window?</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-9">Fees for Sovrin Network services are established by the Economic Advisory Council (EAC) and approved by the Board of Trustees. The Sovrin Economic Policies Controlled Document sets forth the following reasons for the Sovrin Network to incorporate fees:
+                    <ol class="mt-2">
+                        <li>To enable public writes to the ledger while deterring abuse or attacks against the Sovrin Ledger or Sovrin Network.</li>
+                        <li>As a source of revenue to sustain the Sovrin Foundation in accordance with its mission as a nonprofit public trust organization administering the operation of a global digital identity network.</li>
+                        <li>To remunerate third parties for costs incurred to support the Sovrin Network</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9">There are five kinds of records that are presently written to the ledger. They are shown in the Sovrin Fee Table. In order to jump-start adoption of the network prior to a token being available, the Sovrin Foundation began accepting fees denominated in US dollars in March 2019.</div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-11 mt-3">
+                    <label><input class="mr-2" type="checkbox" id="token_fiat_consent_value">I understand that I may purchase utility to the Sovrin Network through the FIAT window and pay in USD.</label>
+                </div>
+            </div>
+        </div>
+        <div id="kyc_consent" class="page hidden" data-prev="token_fiat_consent" data-next="enter_kyc_personal_info">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 mt-4 h4">Know Your Customer</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">In order to be compliant with local, federal, and international financial requirements, all Sovrin Token Purchasers must pass a comprehensive KYC process. This process is conducted by a third-party. Sovrin does not retain any of the information submitted here. Go <a href="">here</a > to learn more about this company.</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-11">I'm purchasing on behalf of a</div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-11">
+                    <label><input class="mr-2" type="radio" name="kyc_purchase_behalf" id="kyc_behalf_corporation">Corporation</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <label><input class="mr-2" type="radio" name="kyc_purchase_behalf" id="kyc_behalf_individual">Individual</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">Wallet Address: If you do not have a digital wallet that supports Sovrin Token, please go <a>here</a> and review your options </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-11 mt-3">
+                    <label><input class="mr-2" type="checkbox" id="kyc_consent_value">I have read the Sovrin Foundation Privacy Policy and agree to the use of any information I submit in a limited capacity</label>
+                </div>
+            </div>
+        </div>
+        <div id="enter_kyc_personal_info" class="page hidden" data-prev="kyc_consent" data-next="enter_kyc_document_info">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 mt-4 h4">Know your Customer</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">In order to be compliant with local, federal, and international financial requirements, all Sovrin Token Purchasers must pass a comprehensive KYC process. This process is conducted by a third-party. Sovrin does not retain any of the information submitted here. Go <a href="">here</a > to learn more about this company.</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-3"><span class="font-weight-bold">First Given Name</span></div>
+                <div class="col-sm-6">
+                    <input id="first_given_name" class="form-control" placeholder="John" type="text" size="45" onkeyup="validateName('#first_given_name')">
+                    <div class="invalid-feedback">Please provide a first given name.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Middle Name</span></div>
+                <div class="col-sm-6">
+                    <input id="middle_name" class="form-control" placeholder="David" type="text" size="45" onkeyup="validateName('#middle_name', true)">
+                    <div class="invalid-feedback">Please provide a valid middle name.</div>
+                </div>
+                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">First Surname</span></div>
+                <div class="col-sm-6">
+                    <input id="first_surname" class="form-control" placeholder="Doe" type="text" size="45" onkeyup="validateName('#first_surname')">
+                    <div class="invalid-feedback">Please provide a first surname.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Date of Birth</span></div>
+                <div class="col-sm-6">
+                    <input id="date_of_birth" class="form-control" data-provide="datepicker" placeholder="mm/dd/yyyy" type="text" size="45" onkeyup="validateDate()">
+                    <div class="invalid-feedback">Please provide a date of birth.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Gender</span></div>
+                <div class="col-sm-6">
+                    <input id="gender" class="form-control" placeholder="Not specified" type="text" size="43" list="genderList" onkeyup="validateGender()">
+                    <datalist id="genderList">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </datalist>
+                </div>
+                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Building Number</span></div>
+                <div class="col-sm-6">
+                    <input id="building_number" class="form-control" placeholder="10" type="tel" size="45" onkeyup="validateNumber('#building_number', true)">
+                    <div class="invalid-feedback">Please provide a valid building number.</div>
+                </div>
+                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Unit Number</span></div>
+                <div class="col-sm-6">
+                    <input id="unit_number" class="form-control" placeholder="3" type="tel" size="45" onkeyup="validateNumber('#unit_number')">
+                    <div class="invalid-feedback">Please provide a valid Flat/Unit/Apartment number.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Street Name</span></div>
+                <div class="col-sm-6">
+                    <input id="street_name" class="form-control" placeholder="St Margaret" type="text" size="45" onkeyup="validateName('#street_name')">
+                    <div class="invalid-feedback">Please provide a street name.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Street Type</span></div>
+                <div class="col-sm-6">
+                    <input id="street_type" class="form-control" placeholder="Street" type="text" size="45" onkeyup="validateName('#street_type')">
+                    <div class="invalid-feedback">Please provide a street type.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Email address</span></div>
+                <div class="col-sm-6">
+                    <input id="email" class="form-control" placeholder="john.doe@sovrin.org" type="email" size="45" onkeyup="validateEmail()">
+                    <div class="invalid-feedback">Please provide a valid email address.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Telephone</span></div>
+                <div class="col-sm-6">
+                    <input id="telephone" class="form-control" placeholder="03 9896 8785" type="text" size="45" onkeyup="validateTelephone()">
+                    <div class="invalid-feedback">Please provide a valid telephone using only numbers and spaces.</div>
+                </div>
+                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">City</span></div>
+                <div class="col-sm-6">
+                    <input id="city" class="form-control" placeholder="London" type="text" size="45" onkeyup="validateName('#city')">
+                    <div class="invalid-feedback">Please provide a valid city name.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">State Province Code</span></div>
+                <div class="col-sm-6">
+                    <input id="state_province_code" class="form-control" placeholder="England" type="text" size="45" onkeyup="validateName('#state_province_code')">
+                    <div class="invalid-feedback">Please provide a state provice code.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Postal Code</span></div>
+                <div class="col-sm-6">
+                    <input id="postal_code" class="form-control" placeholder="SW1P 3JX" type="text" size="45" onkeyup="validateName('#postal_code')">
+                    <div class="invalid-feedback">Please provide a valid postal code.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3"><span class="font-weight-bold">Resident Country</span></div>
+                <div class="col-sm-6">
+                    <input id="country" class="form-control" placeholder="Great Britain" type="text" size="43" list="countryList" onchange="validateCountry()">
+                    <datalist id="countryList">
+                        <option value="The United Kingdom of Great Britain and Northern Ireland">Great Britain</option>
+                        <option value="The United States of America">United States</option>
+                    </datalist>
+                    <div class="invalid-feedback">Please select a country from the list.</div>
+                </div>
+            </div>
+        </div>
+        <div id="enter_kyc_document_info" class="page hidden" data-prev="enter_kyc_personal_info" data-next="token_purchase">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 mt-4 h4">Know your Customer</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">In order to be compliant with local, federal, and international financial requirements, all Sovrin Token Purchasers must pass a comprehensive KYC process. This process is conducted by a third-party. Sovrin does not retain any of the information submitted here. Go <a href="">here</a > to learn more about this company.</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-11">KYC requires a government issued photo id in addition to the other information you have already entered. Only a current driver's license, passport, or national id card are acceptable.</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-3"><span class="font-weight-bold">Document Type</span></div>
+                <div class="col-sm-6">
+                    <input id="document_type" class="form-control" placeholder="Passport" type="text" size="43" list="documentList" onchange="validateDocument()">
+                    <datalist id="documentList">
+                        <option value="Driver's License">Driver's License</option>
+                        <option value="Passport">Passport</option>
+                        <option value="National ID">National ID</option>
+                    </datalist>
+                    <div class="invalid-feedback">Please select a document type from the list.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3">
+                    <span id="document_type_front_label" class="font-weight-bold">Document Front</span>
+                </div>
+                <div class="col-sm-6 mr-3">
+                    <input id="document_upload_front" type="file" accept="image/*;capture=camera" onchange="readFile(this, '#document_upload_file_front')">
+                    <div class="invalid-feedback">Please provide a picture of the front of your <span id="feedback_doc_front">document</span>.</div>
+                </div>
+                <div class="col-sm-3">
+                    <img id="document_upload_file_front" class="hidden" src="#" width="320" height="240">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3">
+                    <span id="document_type_back_label" class="font-weight-bold">Document Back</span>
+                </div>
+                <div class="col-sm-6 mr-3">
+                    <input id="document_upload_back" type="file" accept="image/*;capture=camera" onchange="readFile(this, '#document_upload_file_back')">
+                    <div class="invalid-feedback">Please provide a picture of the back of your <span id="feedback_doc_back">document</span>.</div>
+                </div>
+                <div class="col-sm-3">
+                    <img id="document_upload_file_back" class="hidden" src="#" width="320" height="240">
+                </div>
+            </div>
+        </div>
+                <div id="token_purchase" class="page hidden" data-prev="kyc_purchase_who" data-next="complete_purchase"><h2>Token Purchase</h2></div>
+                <div id="complete_purchase" class="page hidden" data-prev="token_purchase" data-next="finished"><h2>Complete Purchase</h2></div>
+                <div id="finished" class="page hidden"><h2>Finished</h2></div>
+                <div class="row justify-content-center mt-3">
+                    <div class="col-sm-1"><button id="back"><img src="leftgray.png" height="32" width="32"></button></div>
+                    <div class="col-sm-1"><button id="forward"><img src="rightgray.png" height="32" width="32"></button></div>
+                </div> 
+        </div>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            function readFile(input, img_id) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        var img = $(img_id);
+                        img.attr("src", e.target.result);
+                        img.removeClass("hidden");
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            function validateUpload(id) {
+                var input = $(id);
+
+                if (input.val().trim().length == 0) {
+                    input.removeClass('is-valid');
+                    input.addClass('is-invalid');
+                    return false;
+                } else {
+                    input.removeClass('is-invalid');
+                    input.addClass('is-valid');
+                    return true;
+                }
+            }
+
+            function validateCountry() {
+                var country = $('#country');
+                if ($('#countryList option').filter(function() {
+                    return this.value == country.val();
+                }).length > 0) {
+                    country.removeClass("is-invalid");
+                    country.addClass("is-valid");
+                    return true;
+                } else {
+                    country.removeClass("is-valid");
+                    country.addClass("is-invalid");
+                    return false;
+                }
+            }
+
+            function validateDocument() {
+                var doc = $('#document_type');
+                if ($('#documentList option').filter(function() {
+                    return this.value == doc.val();
+                }).length > 0) {
+                    doc.removeClass("is-invalid");
+                    doc.addClass("is-valid");
+                    $('#document_type_front_label').text(doc.val() + " Front");
+                    $('#document_type_back_label').text(doc.val() + " Back");
+                    $('#feedback_doc_front').text(doc.val().toLowerCase());
+                    $('#feedback_doc_back').text(doc.val().toLowerCase());
+                    return true;
+                } else if (doc.val().trim().length == 0) {
+                    $('#document_type_front_label').text("Document Front");
+                    $('#document_type_back_label').text("Document Back");
+                    $('#feedback_doc_front').text('document');
+                    $('#feedback_doc_back').text('document');
+                    doc.removeClass("is-valid");
+                    doc.addClass("is-invalid");
+                    return false;
+                }
+                else {
+                    doc.removeClass("is-valid");
+                    doc.addClass("is-invalid");
+                    return false;
+                }
+            }
+
+            function validateDate() {
+                var date = $('#date_of_birth');
+                var re = /^\d\d\/\d\d\/\d\d\d\d$/;
+                if (!re.test(date.val().trim())) {
+                    date.removeClass("is-valid");
+                    date.addClass("is-invalid");
+                    return false;
+                } else {
+                    date.removeClass("is-invalid");
+                    date.addClass("is-valid");
+                    return true;
+                }
+            }
+
+            function validateNumber(id, optional) {
+                var element = $(id);
+                var re = /^\d+$/;
+                if (optional) {
+                    if (element.val().trim().length == 0) {
+                        element.removeClass('is-invalid');
+                        element.removeClass('is-valid');
+                        return true;
+                    }
+                }
+                if (re.test(element.val().trim())) {
+                    element.removeClass('is-invalid');
+                    element.addClass('is-valid');
+                    return true;
+                } else {
+                    element.removeClass('is-valid');
+                    element.addClass('is-invalid');
+                    return false;
+                }
+            }
+
+            function validateTelephone() {
+                var telephone = $('#telephone');
+                var re = /[^\d ]/;
+                if (telephone.val().trim().length > 0) {
+                    if (re.test(telephone.val().trim())) {
+                        telephone.removeClass('is-valid');
+                        telephone.addClass('is-invalid');
+                        return false;
+                    } else {
+                        telephone.removeClass('is-invalid');
+                        telephone.addClass('is-valid');
+                        return true;
+                    }
+                } else {
+                    telephone.removeClass('is-invalid');
+                    telephone.removeClass('is-valid');
+                    return true;
+                }
+            }
+
+            function validateEmail() {
+                var email = $('#email');
+                var re = /^[\w.%+-]{1,64}@(?:[\w-]{1,63}\.){1,125}[A-Za-z]{2,63}$/;
+                if (!re.test(email.val().trim())) {
+                    email.removeClass('is-valid');
+                    email.addClass('is-invalid');
+                    return false;
+                } else {
+                    email.removeClass('is-invalid');
+                    email.addClass('is-valid');
+                    return true;
+                }
+            }
+
+            function validateGender() {
+                var gender = $('#gender');
+                var genderText = gender.val().trim();
+
+                if (genderText.length > 0) {
+                    if (genderText != "Female" || genderText != "Male") {
+                        gender.removeClass("is-valid");
+                        gender.addClass("is-invalid");
+                        return false;
+                    } else {
+                        gender.removeClass("is-invalid");
+                        gender.addClass("is-valid");
+                        return true;
+                    }
+                } else {
+                    gender.removeClass("is-invalid");
+                    gender.removeClass("is-valid");
+                    return true;
+                }
+            }
+
+            function validateName(id, optional) {
+                var element = $(id);
+                if (optional) {
+                    if (element.val().trim().length == 0) {
+                        element.removeClass('is-invalid');
+                        element.removeClass('is-valid');
+                        return true;
+                    }
+                }
+                if (element.val().length > 0) {
+                    element.removeClass('is-invalid');
+                    element.addClass('is-valid');
+                    return true;
+                } else {
+                    element.removeClass('is-valid');
+                    element.addClass('is-invalid');
+                    return false;
+                }
+            }
+
+            function verify(page) {
+                var kyc = {
+                    'telephone': function() { return validateTelephone(); },
+                    'email': function() { return validateEmail(); },
+                    'country': function() { return validateCountry(); },
+                    'unit_number': function() { return validateNumber('#unit_number') },
+                    'building_number': function() { return validateNumber('#building_number', true) },
+                    'date_of_birth': function() { return validateDate(); },
+                    'gender': function() { return validateGender(); },
+                    'middle_name': function() { return validateName('#middle_name', true); },
+                    'document_type': function() { return validateDocument(); },
+                    'document_upload_front': function() { return validateUpload('#document_upload_front'); },
+                    'document_upload_back': function() { return validateUpload('#document_upload_back'); },
+                }
+                var map = {
+                    'token_purpose_consent': function() {
+                        if ($('#token_purpose_consent_value').prop("checked") == false) {
+                            alert("You must acknowledge you understand the purpose of the Sovrin Token before continuing.");
+                            return false;
+                        }
+                        return true;
+                    },
+                    'token_what_use_consent': function() {
+                        if ($('#token_what_use_consent_value').prop("checked") == false) {
+                            alert("You must acknowledge you understand what the uses of the Sovrin Token are before continuing.");
+                            return false;
+                        }
+                        return true;
+                    },
+                    'token_who_use_consent': function() {
+                        if ($('#token_who_use_consent_value').prop("checked") == false) {
+                            alert("You must acknowledge you understand who uses of the Sovrin Token are before continuing.");
+                            return false;
+                        }
+                        return true;
+                    },
+                    'token_amount_consent': function() {
+                        if ($('#token_amount_consent_value').prop("checked") == false) {
+                            alert("You must acknowledge you understand the amount of the Sovrin Tokens you are allowed to purchase are before continuing.");
+                            return false;
+                        }
+                        return true;
+                    },
+                    'token_fiat_consent': function() {
+                        if ($('#token_fiat_consent_value').prop("checked") == false) {
+                            alert("You must acknowledge you understand the FIAT window for purchasingg Sovrin Tokens before continuing.");
+                            return false;
+                        }
+                        return true;
+                    },
+                    'kyc_consent': function() {
+                        var radioValue = $("input[name='kyc_purchase_behalf']:checked").val();
+                        if (!radioValue) {
+                            alert("You much select to whom on behalf you are purchasing Sovrin Tokens before continuing.");
+                            $('#kyc_behalf_corporation').focus();
+                            return false;
+                        }
+                        if ($('#kyc_consent_value').prop("checked") == false) {
+                            alert("You must acknowledge you have read the Sovrin Foundation Privacy Policy and agree to the information usage before continuing.");
+                            return false;
+                        }
+                        return true;
+                    },
+                    'enter_kyc_personal_info': function() {
+                        if ($('#enter_personal_kyc_info input').filter(function() {
+                            if (kyc[this.id]) {
+                                return !kyc[this.id]();
+                            }
+                            return !validateName('#' + this.id);
+                        }).length > 0) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'enter_kyc_document_info': function() {
+                        if ($('#enter_kyc_document_info input').filter(function() {
+                            if (kyc[this.id]) {
+                                return !kyc[this.id]();
+                            }
+                            return !validateName('#' + this.id);
+                        }).length > 0) {
+                            return false;
+                        }
+                        return true;
+                    }
+                };
+
+                if (map[page]) {
+                    return map[page]();
+                } else {
+                    return false;
+                }
+            }
+
+            function verifyAndRender(pageName) {
+                if (!verify(pageName)) {
+                    return false;
+                }
+                render($('#' + pageName).attr("data-next"));
+                return true;
+            }
+
+            function render(pageName) {
+                if ($('#finished').hasClass("visible")) {
+                    return;
+                }
+
+                //var temp = url.split('/')[0];
+
+                if (!pageName) {
+                    pageName = "token_purpose_consent";
+                }
+                //Hide whatever page is currently shown
+                var page = $(".main .page");
+
+                //if (!load_only && !verify(page.attr('id'))) {
+                //    return;
+                //}
+
+                page.removeClass("visible");
+                page.addClass("hidden");
+
+                //Show the page
+                var page = $('#' + pageName);
+
+                if (!page) {
+                    errorPage();
+                    return;
+                }
+
+                page.removeClass("hidden");
+                page.addClass("visible");
+                $('#forward').attr("onclick", 'return verifyAndRender("' + pageName + '");');
+                $('#back').attr("onclick", 'return render("' + page.attr("data-prev") + '");');
+
+                if (pageName == "token_purpose_consent") {
+                    $('#back').addClass("hidden");
+                } else {
+                    $('#back').removeClass("hidden");
+                }
+
+                if ($('#finished').hasClass("visible")) {
+                    $('#forward').addClass("hidden");
+                    $('#back').addClass("hidden");
+                }
+            }
+
+            function errorPage() {
+
+            }
+
+            $(document).ready( function() {
+                render();
+                //$(window).on('hashchange', function() {
+                //    render(decodeURI(window.location.hash));
+                //});
+                //render(decodeURI(window.location.hash));
+            });
+        </script>
+
+    </body>
+            <div class="container">
+
+</html>
