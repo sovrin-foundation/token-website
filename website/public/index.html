@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head lang="en">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
         <style>
             .hidden {
                 display: none;
@@ -11,16 +15,15 @@
             .visible {
                 display: block;
             }
-            #country {
-                box-sizing: border-box;
-            }
-            #country:focus {
-                outline: 3px solid #ddd;
-            }
     </style>
 </head>
 <body>
     <div class="main container"> 
+
+        <datalist id="countryList">
+            <option value="The United Kingdom of Great Britain and Northern Ireland"></option>
+            <option value="The United States of America"></option>
+        </datalist>
         <div id="token_purpose_consent" class="page hidden" data-prev="" data-next="token_what_use_consent">
             <div class="row justify-content-center">
                 <div class="col-sm-8 mt-4 h4">Who are you buying tokens for?</div>
@@ -139,12 +142,12 @@
             </div>
             <div class="row mt-2">
                 <div class="col-sm-11">
-                    <label><input class="mr-2" type="radio" name="kyc_purchase_behalf" id="kyc_behalf_corporation">Corporation</label>
+                    <label><input class="mr-2" type="radio" name="kyc_purchase_behalf" id="kyc_behalf_corporation" value="corporation">Corporation</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-11">
-                    <label><input class="mr-2" type="radio" name="kyc_purchase_behalf" id="kyc_behalf_individual">Individual</label>
+                    <label><input class="mr-2" type="radio" name="kyc_purchase_behalf" id="kyc_behalf_individual" value="individual">Individual</label>
                 </div>
             </div>
             <div class="row">
@@ -156,6 +159,125 @@
                 </div>
             </div>
         </div>
+        <div id="enter_kyc_business_info" class="page hidden" data-prev="kyc_consent" data-next="enter_kyc_personal_info">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 mt-4 h4">Know your Business</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">In order to be compliant with local, federal, and international financial requirements, all Sovrin Token Business Purchasers must pass a comprehensive KYB process. This process is conducted by a third-party. Sovrin does not retain any of the information submitted here. Go <a href="">here</a > to learn more about this company.</div>
+            </div>
+          <div class="border mt-3">
+            <div class="row mt-2 justify-content-center">
+                <div class="col-sm-5 h4">Business Information</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Name</span></div>
+                <div class="col-sm-6">
+                    <input id="business_name" class="form-control" placeholder="For Sale, Inc." type="text" size="45" onchange="verifyName('#business_name')">
+                    <div class="invalid-feedback">Please provide the business name.</div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Registration Number</span></div>
+                <div class="col-sm-6">
+                    <input id="business_registration_number" class="form-control" placeholder="01-23456789" type="text" size="45" onchange="verifyName('#business_registration_number')">
+                    <div class="invalid-feedback">Please provide the business registration number.</div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Incorporation Date</span></div>
+                <div class="col-sm-6">
+                    <input id="date_of_incorporation" class="form-control" placeholder="mm/dd/yyyy" type="text" size="45" onchange="verifyDate('#date_of_incorporation')">
+                    <div class="invalid-feedback">Please provide the date the business was incorporated.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Jurisdiction Country</span></div>
+                <div class="col-sm-6">
+                    <input id="business_jurisdiction_country" class="form-control" placeholder="Great Britain" type="text" size="43" list="countryList" onchange="verifyCountry('#business_jurisdiction_country', '#countryList')">
+                    <div class="invalid-feedback">Please select a country from the list where the jurisdiction of incorporation of the business.</div>
+                </div>            
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">DUNS Number</span></div>
+                <div class="col-sm-6">
+                    <input id="duns_number" class="form-control" placeholder="10" type="tel" onchange="verifyNumber('#duns_number', true)">
+                    <div class="invalid-feedback">Please provide a valid duns number.</div>
+                </div>
+                <div class="col-sm-1 mt-2"><span class="text-muted">Optional</span></div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Telephone</span></div>
+                <div class="col-sm-6">
+                    <input id="business_telephone" class="form-control mb-3" placeholder="03 9896 8785" type="text" onchange="verifyTelephone('#business_telephone')">
+                    <div class="invalid-feedback">Please provide a valid telephone using only numbers and spaces.</div>
+                </div>
+                <div class="col-sm-1 mt-2"><span class="text-muted">Optional</span></div>
+            </div>
+          </div>
+          <div class="border mt-3">
+            <div class="row mt-2 justify-content-center">
+                <div class="col-sm-5 h4">Business Physical Location</div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Building Number</span></div>
+                <div class="col-sm-6">
+                    <input id="business_building_number" class="form-control" placeholder="10" type="text" size="45" onchange="verifyNumber('#business_building_number', true)">
+                    <div class="invalid-feedback">Please provide a valid House/Civic/Building number of address.</div>
+                </div>
+                <div class="col-sm-1 mt-2"><span class="text-muted">Optional</span></div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Unit Number</span></div>
+                <div class="col-sm-6">
+                    <input id="business_unit_number" class="form-control" placeholder="3" type="tel" size="45" onchange="verifyNumber('#business_unit_number')">
+                    <div class="invalid-feedback">Please provide a valid Flat/Unit/Apartment number.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Street Name</span></div>
+                <div class="col-sm-6">
+                    <input id="business_street_name" class="form-control" placeholder="St Margaret" type="text" size="45" onchange="verifyName('#business_street_name')">
+                    <div class="invalid-feedback">Please provide a street name where the business is physically located.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Street Type</span></div>
+                <div class="col-sm-6">
+                    <input id="business_street_type" class="form-control" placeholder="Street" type="text" size="45" onchange="verifyName('#business_street_type')">
+                    <div class="invalid-feedback">Please provide a street type where the business is physically located.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">City</span></div>
+                <div class="col-sm-6">
+                    <input id="business_city" class="form-control" placeholder="London" type="text" size="45" onchange="verifyName('#business_city')">
+                    <div class="invalid-feedback">Please provide a valid city name where the business is physically located.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">State Code</span></div>
+                <div class="col-sm-6">
+                    <input id="business_state_province_code" class="form-control" placeholder="England" type="text" size="45" onchange="verifyName('#business_state_province_code')">
+                    <div class="invalid-feedback">Please provide a state provice code where the business is physically located.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Postal Code</span></div>
+                <div class="col-sm-6">
+                    <input id="business_postal_code" class="form-control" placeholder="SW1P 3JX" type="text" size="45" onchange="verifyName('#business_postal_code')">
+                    <div class="invalid-feedback">Please provide a valid postal code where the business is physically located.</div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Country</span></div>
+                <div class="col-sm-6">
+                    <input id="business_physical_country" class="form-control mb-3" placeholder="Great Britain" type="text" size="43" list="countryList" onchange="verifyCountry('#business_physical_country', '#countryList')">
+                    <div class="invalid-feedback">Please select a country from the list where the business is physically located.</div>
+                </div>            
+            </div>
+          </div>
+        </div>
         <div id="enter_kyc_personal_info" class="page hidden" data-prev="kyc_consent" data-next="enter_kyc_document_info">
             <div class="row justify-content-center">
                 <div class="col-sm-6 mt-4 h4">Know your Customer</div>
@@ -163,124 +285,130 @@
             <div class="row">
                 <div class="col-sm-11">In order to be compliant with local, federal, and international financial requirements, all Sovrin Token Purchasers must pass a comprehensive KYC process. This process is conducted by a third-party. Sovrin does not retain any of the information submitted here. Go <a href="">here</a > to learn more about this company.</div>
             </div>
+          <div class="border mt-3">
+            <div class="row mt-2 justify-content-center">
+                <div class="col-sm-5 h4">Personal Information</div>
+            </div>
             <div class="row mt-3">
-                <div class="col-sm-3"><span class="font-weight-bold">First Given Name</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">First Given Name</span></div>
                 <div class="col-sm-6">
-                    <input id="first_given_name" class="form-control" placeholder="John" type="text" size="45" onkeyup="validateName('#first_given_name')">
+                    <input id="first_given_name" class="form-control" placeholder="John" type="text" size="45" onchange="verifyName('#first_given_name')">
                     <div class="invalid-feedback">Please provide a first given name.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Middle Name</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Middle Name</span></div>
                 <div class="col-sm-6">
-                    <input id="middle_name" class="form-control" placeholder="David" type="text" size="45" onkeyup="validateName('#middle_name', true)">
+                    <input id="middle_name" class="form-control" placeholder="David" type="text" size="45" onchange="verifyName('#middle_name', true)">
                     <div class="invalid-feedback">Please provide a valid middle name.</div>
                 </div>
-                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+                <div class="col-sm-1 mt-2"><span class="text-muted">Optional</span></div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">First Surname</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">First Surname</span></div>
                 <div class="col-sm-6">
-                    <input id="first_surname" class="form-control" placeholder="Doe" type="text" size="45" onkeyup="validateName('#first_surname')">
+                    <input id="first_surname" class="form-control" placeholder="Doe" type="text" size="45" onchange="verifyName('#first_surname')">
                     <div class="invalid-feedback">Please provide a first surname.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Date of Birth</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Date of Birth</span></div>
                 <div class="col-sm-6">
-                    <input id="date_of_birth" class="form-control" data-provide="datepicker" placeholder="mm/dd/yyyy" type="text" size="45" onkeyup="validateDate()">
+                    <input id="date_of_birth" class="form-control" placeholder="mm/dd/yyyy" type="text" size="45" onchange="verifyDate('#date_of_birth')">
                     <div class="invalid-feedback">Please provide a date of birth.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Gender</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Gender</span></div>
                 <div class="col-sm-6">
-                    <input id="gender" class="form-control" placeholder="Not specified" type="text" size="43" list="genderList" onkeyup="validateGender()">
+                    <input id="gender" class="form-control mb-3" placeholder="Not specified" type="text" size="43" list="genderList" onchange="verifyGender()">
                     <datalist id="genderList">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
+                        <option value="Male"></option>
+                        <option value="Female"></option>
                     </datalist>
                 </div>
-                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+                <div class="col-sm-1 mt-2"><span class="text-muted">Optional</span></div>
+            </div>
+          </div>
+          <div class="border mt-3">
+            <div class="row mt-2 justify-content-center">
+                <div class="col-sm-5 h4">Address</div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Building Number</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Building Number</span></div>
                 <div class="col-sm-6">
-                    <input id="building_number" class="form-control" placeholder="10" type="tel" size="45" onkeyup="validateNumber('#building_number', true)">
+                    <input id="building_number" class="form-control" placeholder="10" type="tel" size="45" onchange="verifyNumber('#building_number', true)">
                     <div class="invalid-feedback">Please provide a valid building number.</div>
                 </div>
-                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+                <div class="col-sm-1 mt-2"><span class="text-muted">Optional</span></div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Unit Number</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Unit Number</span></div>
                 <div class="col-sm-6">
-                    <input id="unit_number" class="form-control" placeholder="3" type="tel" size="45" onkeyup="validateNumber('#unit_number')">
+                    <input id="unit_number" class="form-control" placeholder="3" type="tel" onchange="verifyNumber('#unit_number')">
                     <div class="invalid-feedback">Please provide a valid Flat/Unit/Apartment number.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Street Name</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Street Name</span></div>
                 <div class="col-sm-6">
-                    <input id="street_name" class="form-control" placeholder="St Margaret" type="text" size="45" onkeyup="validateName('#street_name')">
+                    <input id="street_name" class="form-control" placeholder="St Margaret" type="text" onchange="verifyName('#street_name')">
                     <div class="invalid-feedback">Please provide a street name.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Street Type</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Street Type</span></div>
                 <div class="col-sm-6">
-                    <input id="street_type" class="form-control" placeholder="Street" type="text" size="45" onkeyup="validateName('#street_type')">
+                    <input id="street_type" class="form-control" placeholder="Street" type="text" onchange="verifyName('#street_type')">
                     <div class="invalid-feedback">Please provide a street type.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Email address</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Email address</span></div>
                 <div class="col-sm-6">
-                    <input id="email" class="form-control" placeholder="john.doe@sovrin.org" type="email" size="45" onkeyup="validateEmail()">
+                    <input id="email" class="form-control" placeholder="john.doe@sovrin.org" type="email" onchange="verifyEmail()">
                     <div class="invalid-feedback">Please provide a valid email address.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Telephone</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Telephone</span></div>
                 <div class="col-sm-6">
-                    <input id="telephone" class="form-control" placeholder="03 9896 8785" type="text" size="45" onkeyup="validateTelephone()">
+                    <input id="telephone" class="form-control" placeholder="03 9896 8785" type="text" onchange="verifyTelephone('#telephone')">
                     <div class="invalid-feedback">Please provide a valid telephone using only numbers and spaces.</div>
                 </div>
-                <div class="col-sm-1"><span class="text-muted">Optional</span></div>
+                <div class="col-sm-1 mt-2"><span class="text-muted">Optional</span></div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">City</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">City</span></div>
                 <div class="col-sm-6">
-                    <input id="city" class="form-control" placeholder="London" type="text" size="45" onkeyup="validateName('#city')">
+                    <input id="city" class="form-control" placeholder="London" type="text" onchange="verifyName('#city')">
                     <div class="invalid-feedback">Please provide a valid city name.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">State Province Code</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">State Province Code</span></div>
                 <div class="col-sm-6">
-                    <input id="state_province_code" class="form-control" placeholder="England" type="text" size="45" onkeyup="validateName('#state_province_code')">
+                    <input id="state_province_code" class="form-control" placeholder="England" type="text" onchange="verifyName('#state_province_code')">
                     <div class="invalid-feedback">Please provide a state provice code.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Postal Code</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Postal Code</span></div>
                 <div class="col-sm-6">
-                    <input id="postal_code" class="form-control" placeholder="SW1P 3JX" type="text" size="45" onkeyup="validateName('#postal_code')">
+                    <input id="postal_code" class="form-control" placeholder="SW1P 3JX" type="text" onchange="verifyName('#postal_code')">
                     <div class="invalid-feedback">Please provide a valid postal code.</div>
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-sm-3"><span class="font-weight-bold">Resident Country</span></div>
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Resident Country</span></div>
                 <div class="col-sm-6">
-                    <input id="country" class="form-control" placeholder="Great Britain" type="text" size="43" list="countryList" onchange="validateCountry()">
-                    <datalist id="countryList">
-                        <option value="The United Kingdom of Great Britain and Northern Ireland">Great Britain</option>
-                        <option value="The United States of America">United States</option>
-                    </datalist>
+                    <input id="country" class="form-control mb-3" placeholder="Great Britain" type="text" list="countryList" onchange="verifyCountry('#country', '#countryList')">
                     <div class="invalid-feedback">Please select a country from the list.</div>
                 </div>
             </div>
+          </div>
         </div>
-        <div id="enter_kyc_document_info" class="page hidden" data-prev="enter_kyc_personal_info" data-next="token_purchase">
+        <div id="enter_kyc_document_info" class="page hidden" data-prev="enter_kyc_personal_info" data-next="wallet_address">
             <div class="row justify-content-center">
                 <div class="col-sm-6 mt-4 h4">Know your Customer</div>
             </div>
@@ -293,7 +421,7 @@
             <div class="row mt-3">
                 <div class="col-sm-3"><span class="font-weight-bold">Document Type</span></div>
                 <div class="col-sm-6">
-                    <input id="document_type" class="form-control" placeholder="Passport" type="text" size="43" list="documentList" onchange="validateDocument()">
+                    <input id="document_type" class="form-control" placeholder="Passport" type="text" list="documentList" onchange="verifyDocument()">
                     <datalist id="documentList">
                         <option value="Driver's License">Driver's License</option>
                         <option value="Passport">Passport</option>
@@ -327,15 +455,109 @@
                 </div>
             </div>
         </div>
-                <div id="token_purchase" class="page hidden" data-prev="kyc_purchase_who" data-next="complete_purchase"><h2>Token Purchase</h2></div>
-                <div id="complete_purchase" class="page hidden" data-prev="token_purchase" data-next="finished"><h2>Complete Purchase</h2></div>
-                <div id="finished" class="page hidden"><h2>Finished</h2></div>
-                <div class="row justify-content-center mt-3">
-                    <div class="col-sm-1"><button id="back"><img src="leftgray.png" height="32" width="32"></button></div>
-                    <div class="col-sm-1"><button id="forward"><img src="rightgray.png" height="32" width="32"></button></div>
-                </div> 
+        <div id="wallet_address" class="page hidden" data-prev="enter_kyc_document_info" data-next="token_purchase">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 mt-4 h4">Wallet Address</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    We need to determine if you control the wallet address that will be associated with your purchase. Please copy this value into your wallet software to complete the challenge and paste the response below.
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-3">
+                    <span class="font-weight-bold">Challenge</span>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-2">
+                    <div id="wallet_challenge_qr"></div>
+                </div>
+                <div class="col-sm-6">
+                    <input id="wallet_challenge_text" class="form-control" type="text" style="background-color: white;" readonly>
+                    <div id="wallet_challenge_text_toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1000" style="position: absolute; top: 0; right: 0;">
+                        <div class="toast-body">Copied!</div>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <i class="fa fa-copy" onclick="copyTextToClipboard('#wallet_challenge_text')"></i>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-3">
+                    <span class="font-weight-bold">Response</span>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-8">
+                    <textarea id="wallet_challenge_response" class="form-control" rows="5"></textarea>
+                    <div class="invalid-feedback">Please provide a valid response to the challenge.</div>
+                </div>
+<!--                
+                <div class="col-sm-1">
+                    <i class="fa fa-paste" onclick="copyTextFromClipboard('#wallet_challenge_response')"></i>
+                </div>
+-->
+            </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <div id="token_purchase" class="page hidden" data-prev="wallet_address" data-next="complete_purchase">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 mt-4 h4">Purchase Tokens</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">To determine the appropriate number of Sovrin Tokens for your specific needs and use, please use the <a href="">Recommended Token Purchase Amount Guide</a> If you already know how many tokens you’d like to purchase, please use the form below.</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-2 mt-2 ml-3"><span class="font-weight-bold">Number of tokens</span></div>
+                <div class="col-sm-6">
+                    <input id="total_tokens" class="form-control" placeholder="100" type="tel" onchange="verifyNumber('#total_tokens')">
+                    <div class="invalid-feedback">Please provide the number of tokens as a whole number.</div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-2 ml-3"><span class="font-weight-bold">Purchase amount<br>In USD($)</span></div>
+                <div class="col-sm-6">
+                    <input id="total_purchase_amount" class="form-control" placeholder="1000" type="tel" onchange="verifyNumber('#total_purchase_amount')">
+                    <div class="invalid-feedback">Please enter the total purchase amount as a whole number.</div>
+                </div>
+            </div>
+        </div>
+        <div id="complete_purchase" class="page hidden" data-prev="token_purchase" data-next="finished">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 mt-4 h4">Complete Purchase</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-3">Payment method</div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-11">
+                    <label><input class="mr-2" type="radio" name="payment_method" id="payment_ether" value="ether">Ether</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <label><input class="mr-2" type="radio" name="payment_method" id="payment_bitcoin" value="btc">Bitcoin</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <label><input class="mr-2" type="radio" name="payment_method" id="payment_fiat" value="fiat">Fiat</label>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-11 mt-3">
+                    <label><input class="mr-2" type="checkbox" id="payment_consent">I agree to the TERMS & CONDITIONS</label>
+                </div>
+            </div>
+        </div>
+        <div id="finished" class="page hidden"><h2>Finished</h2></div>
+        <div class="row justify-content-center mt-3">
+            <div class="col-sm-1"><button id="back"><img src="leftgray.png" height="32" width="32"></button></div>
+            <div class="col-sm-1"><button id="forward"><img src="rightgray.png" height="32" width="32"></button></div>
+        </div> 
+    </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js" integrity="sha384-0B/45e2to395pfnCkbfqwKFFwAa7zXdvd42eAFJa3Vm8KZ/jmHdn93XdWi//7MDS" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <script type="text/javascript">
@@ -352,7 +574,36 @@
                 }
             }
 
-            function validateUpload(id) {
+            function copyTextToClipboard(id) {
+                var text = $(id);
+                text.focus();
+                text[0].setSelectionRange(0, text.val().length);
+                var success = true;
+                try {
+                    document.execCommand("copy");
+                } catch (e) {
+                    success = false;
+                }
+                text[0].setSelectionRange(0, 0);
+                $(id + "_toast").toast('show');
+                return success;
+            }
+
+            function copyTextFromClipboard(id) {
+                var text = $(id);
+                text.focus();
+                text[0].setSelectionRange(0, text.val().length);
+                var success = true;
+                try {
+                    document.execCommand("paste");
+                } catch (e) {
+                    success = false;
+                }
+                text[0].setSelectionRange(0, 0);
+                return success;
+            }
+
+            function verifyUpload(id) {
                 var input = $(id);
 
                 if (input.val().trim().length == 0) {
@@ -366,9 +617,9 @@
                 }
             }
 
-            function validateCountry() {
-                var country = $('#country');
-                if ($('#countryList option').filter(function() {
+            function verifyCountry(id, list) {
+                var country = $(id);
+                if ($(list + ' option').filter(function() {
                     return this.value == country.val();
                 }).length > 0) {
                     country.removeClass("is-invalid");
@@ -381,7 +632,7 @@
                 }
             }
 
-            function validateDocument() {
+            function verifyDocument() {
                 var doc = $('#document_type');
                 if ($('#documentList option').filter(function() {
                     return this.value == doc.val();
@@ -409,9 +660,9 @@
                 }
             }
 
-            function validateDate() {
-                var date = $('#date_of_birth');
-                var re = /^\d\d\/\d\d\/\d\d\d\d$/;
+            function verifyDate(id) {
+                var date = $(id);
+                var re = /^(?:0[1-9]|1[012])\/(?:0[1-9]|[12][0-9]|3[01])\/(?:19|20)\d\d$/;
                 if (!re.test(date.val().trim())) {
                     date.removeClass("is-valid");
                     date.addClass("is-invalid");
@@ -423,7 +674,7 @@
                 }
             }
 
-            function validateNumber(id, optional) {
+            function verifyNumber(id, optional) {
                 var element = $(id);
                 var re = /^\d+$/;
                 if (optional) {
@@ -444,8 +695,8 @@
                 }
             }
 
-            function validateTelephone() {
-                var telephone = $('#telephone');
+            function verifyTelephone(id) {
+                var telephone = $(id);
                 var re = /[^\d ]/;
                 if (telephone.val().trim().length > 0) {
                     if (re.test(telephone.val().trim())) {
@@ -464,7 +715,7 @@
                 }
             }
 
-            function validateEmail() {
+            function verifyEmail() {
                 var email = $('#email');
                 var re = /^[\w.%+-]{1,64}@(?:[\w-]{1,63}\.){1,125}[A-Za-z]{2,63}$/;
                 if (!re.test(email.val().trim())) {
@@ -478,19 +729,19 @@
                 }
             }
 
-            function validateGender() {
+            function verifyGender() {
                 var gender = $('#gender');
                 var genderText = gender.val().trim();
 
                 if (genderText.length > 0) {
-                    if (genderText != "Female" || genderText != "Male") {
-                        gender.removeClass("is-valid");
-                        gender.addClass("is-invalid");
-                        return false;
-                    } else {
+                    if (genderText == "Female" || genderText == "Male") {
                         gender.removeClass("is-invalid");
                         gender.addClass("is-valid");
                         return true;
+                    } else {
+                        gender.removeClass("is-valid");
+                        gender.addClass("is-invalid");
+                        return false;
                     }
                 } else {
                     gender.removeClass("is-invalid");
@@ -499,7 +750,7 @@
                 }
             }
 
-            function validateName(id, optional) {
+            function verifyName(id, optional) {
                 var element = $(id);
                 if (optional) {
                     if (element.val().trim().length == 0) {
@@ -521,17 +772,26 @@
 
             function verify(page) {
                 var kyc = {
-                    'telephone': function() { return validateTelephone(); },
-                    'email': function() { return validateEmail(); },
-                    'country': function() { return validateCountry(); },
-                    'unit_number': function() { return validateNumber('#unit_number') },
-                    'building_number': function() { return validateNumber('#building_number', true) },
-                    'date_of_birth': function() { return validateDate(); },
-                    'gender': function() { return validateGender(); },
-                    'middle_name': function() { return validateName('#middle_name', true); },
-                    'document_type': function() { return validateDocument(); },
-                    'document_upload_front': function() { return validateUpload('#document_upload_front'); },
-                    'document_upload_back': function() { return validateUpload('#document_upload_back'); },
+                    'building_number': function() { return verifyNumber('#building_number', true) },
+                    'business_building_number': function() { return verifyNumber('#business_building_number', true) },
+                    'business_jurisdiction_country': function() { return verifyCountry('#business_jurisdiction_country', '#countryList'); },
+                    'business_physical_country': function() { return verifyCountry('#business_physical_country', '#countryList'); },
+                    'business_telephone': function() { return verifyTelephone('#business_telephone'); },
+                    'business_unit_number': function() { return verifyNumber('#business_unit_number'); },
+                    'country': function() { return verifyCountry('#country', '#countryList'); },
+                    'date_of_birth': function() { return verifyDate('#date_of_birth'); },
+                    'date_of_incorporation': function() { return verifyDate('#date_of_incorporation'); },
+                    'document_type': function() { return verifyDocument(); },
+                    'document_upload_back': function() { return verifyUpload('#document_upload_back'); },
+                    'document_upload_front': function() { return verifyUpload('#document_upload_front'); },
+                    'duns_number': function() { return verifyNumber('#duns_number', true); },
+                    'email': function() { return verifyEmail(); },
+                    'gender': function() { return verifyGender(); },
+                    'middle_name': function() { return verifyName('#middle_name', true); },
+                    'telephone': function() { return verifyTelephone('#telephone'); },
+                    'unit_number': function() { return verifyNumber('#unit_number'); },
+                    'total_tokens': function() { return verifyNumber('#total_tokens'); },
+                    'total_purchase_amount': function() { return verifyNumber('#total_purchase_amount'); }
                 }
                 var map = {
                     'token_purpose_consent': function() {
@@ -580,14 +840,32 @@
                             alert("You must acknowledge you have read the Sovrin Foundation Privacy Policy and agree to the information usage before continuing.");
                             return false;
                         }
+                        if (radioValue == "corporation") {
+                            $('#kyc_consent').attr('data-next', 'enter_kyc_business_info');
+                            $('#enter_kyc_personal_info').attr('data-prev', 'enter_kyc_business_info');
+                        } else {
+                            $('#kyc_consent').attr('data-next', 'enter_kyc_personal_info');
+                            $('#enter_kyc_personal_info').attr('data-prev', 'kyc_consent');
+                        }
                         return true;
                     },
-                    'enter_kyc_personal_info': function() {
-                        if ($('#enter_personal_kyc_info input').filter(function() {
+                    'enter_kyc_business_info': function() {
+                        if ($('#enter_kyc_business_info input').filter(function() {
                             if (kyc[this.id]) {
                                 return !kyc[this.id]();
                             }
-                            return !validateName('#' + this.id);
+                            return !verifyName('#' + this.id);
+                        }).length > 0) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'enter_kyc_personal_info': function() {
+                        if ($('#enter_kyc_personal_info input').filter(function() {
+                            if (kyc[this.id]) {
+                                return !kyc[this.id]();
+                            }
+                            return !verifyName('#' + this.id);
                         }).length > 0) {
                             return false;
                         }
@@ -598,8 +876,39 @@
                             if (kyc[this.id]) {
                                 return !kyc[this.id]();
                             }
-                            return !validateName('#' + this.id);
+                            return !verifyName('#' + this.id);
                         }).length > 0) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'wallet_address': function() {
+                        var wallet_challenge_response = $('#wallet_challenge_response');
+                        if (wallet_challenge_response.val().length == 0) {
+                            wallet_challenge_response.addClass('is-invalid');
+                            return false;
+                        }
+                        wallet_challenge_response.removeClass('is-invalid');
+                        return true;
+                    },
+                    'token_purchase': function() {
+                        if ($('#token_purchase input').filter(function() {
+                            if (kyc[this.id]) {
+                                return !kyc[this.id]();
+                            }
+                        }).length > 0) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'complete_purchase': function() {
+                        var radioValue = $("input[name='payment_method']:checked").val();
+                        if (!radioValue) {
+                            alert("You must select a payment method.")
+                            return false;
+                        }
+                        if ($('#payment_consent').prop("checked") == false) {
+                            alert("You must agree to the Terms and Conditions");
                             return false;
                         }
                         return true;
@@ -626,17 +935,11 @@
                     return;
                 }
 
-                //var temp = url.split('/')[0];
-
                 if (!pageName) {
                     pageName = "token_purpose_consent";
                 }
                 //Hide whatever page is currently shown
                 var page = $(".main .page");
-
-                //if (!load_only && !verify(page.attr('id'))) {
-                //    return;
-                //}
 
                 page.removeClass("visible");
                 page.addClass("hidden");
@@ -671,15 +974,65 @@
             }
 
             $(document).ready( function() {
-                render();
-                //$(window).on('hashchange', function() {
-                //    render(decodeURI(window.location.hash));
-                //});
-                //render(decodeURI(window.location.hash));
+                render('complete_purchase');
+                var rxDigits = /^\d+$/;
+                var handling = false;
+                $('#total_tokens').change(function() {
+                    if (handling) {
+                        return;
+                    }
+                    var value = this.value.trim();
+                    if (value.length > 0 && rxDigits.test(value)) {
+                        handling = true;
+                        $('#total_purchase_amount').val(value * 0.02);
+                        handling = false;
+                    }
+                });
+                $('#total_purchase_amount').change(function() {
+                    if (handling) {
+                        return;
+                    }
+                    var value = this.value.trim();
+                    if (value.length > 0 && rxDigits.test(value)) {
+                        handling = true;
+                        $('#total_tokens').val(value / 0.02);
+                        handling = false;
+                    }
+                });
+                $.ajax({
+                    url: "/api/v1/countries",
+                    success: function(data) {
+                        var i;
+                        var countries = JSON.parse(data);
+                        if (countries.status != "success") {
+                            return;
+                        }
+                        countries = countries.result;
+
+                        var countryList = $('#countryList');
+                        countryList.empty();
+                        for (i=0; i < countries.length; i++) {
+                            $('<option value="'+ countries[i].long_name +'" data-alpha2="'+ countries[i].alpha2 +'"/>').appendTo(countryList);
+                        }
+                    }
+                });
+                $.ajax({
+                        url: "/api/v1/payment_address_challenge",
+                        success: function(data) {
+                            var challenge = JSON.parse(data);
+                            if (challenge.status != "success") {
+                                return;
+                            }
+                            $('#wallet_challenge_text').val(challenge.result);
+                            $('#wallet_challenge_qr').empty();
+                            $('#wallet_challenge_qr').qrcode({
+                                width: 128,
+                                height: 128,
+                                text: challenge.result
+                            });
+                        }
+                    });
             });
         </script>
-
     </body>
-            <div class="container">
-
 </html>

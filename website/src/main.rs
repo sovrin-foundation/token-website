@@ -204,7 +204,7 @@ fn main() {
         .manage(countries)
         .manage(base64_url::decode(&config.keys.challenge_signing_key).unwrap())
         .manage(request)
-        .mount("/", StaticFiles::from("/public"))
+        .mount("/", StaticFiles::from(concat!(env!("CARGO_MANIFEST_DIR"), "/public")))
         .mount("/api/v1", routes![get_allowed_countries,
                                       get_consents,
                                       get_payment_address_challenge,
