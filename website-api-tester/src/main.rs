@@ -187,94 +187,94 @@ const MAIN_PAGE_2: &str = r##"
 
 
 fn main() {
-    let (tx, rx) = std::sync::mpsc::channel::<WebCmd>();
-    let mut countries = celes::Country::get_countries().iter().map(|c| format!("<option value=\"{}\">{} - {}</option>", c.alpha2, c.alpha2, c.long_name)).collect::<Vec<String>>();
-    countries.sort();
-    let mut page = String::new();
-    page.push_str(MAIN_PAGE_1);
-    page.push_str(&countries.join(""));
-    page.push_str(MAIN_PAGE_2);
-    let webview = web_view::builder()
-        .title("Website API tester")
-        .content(Content::Html(page))
-        .user_data(0)
-        .size(1200, 800)
-        .resizable(true)
-        .invoke_handler(|_, arg| {
-            let cmd = serde_json::from_str(arg).unwrap();
-            tx.send(cmd).unwrap();
-            Ok(())
-        }).build().unwrap();
-    let wv_handle = webview.handle();
-    std::thread::spawn(move ||{
-        loop {
-            let cmd = rx.recv().unwrap();
-            info!("{:?}", cmd);
+    // let (tx, rx) = std::sync::mpsc::channel::<WebCmd>();
+    // let mut countries = celes::Country::get_countries().iter().map(|c| format!("<option value=\"{}\">{} - {}</option>", c.alpha2, c.alpha2, c.long_name)).collect::<Vec<String>>();
+    // countries.sort();
+    // let mut page = String::new();
+    // page.push_str(MAIN_PAGE_1);
+    // page.push_str(&countries.join(""));
+    // page.push_str(MAIN_PAGE_2);
+    // let webview = web_view::builder()
+    //     .title("Website API tester")
+    //     .content(Content::Html(page))
+    //     .user_data(0)
+    //     .size(1200, 800)
+    //     .resizable(true)
+    //     .invoke_handler(|_, arg| {
+    //         let cmd = serde_json::from_str(arg).unwrap();
+    //         tx.send(cmd).unwrap();
+    //         Ok(())
+    //     }).build().unwrap();
+    // let wv_handle = webview.handle();
+    // std::thread::spawn(move ||{
+    //     loop {
+    //         let cmd = rx.recv().unwrap();
+    //         info!("{:?}", cmd);
 
-            if cmd.clone().url.is_empty() {
-                wv_handle.dispatch(|wv| {
-                    wv.eval(&format!(r##"set_error("URL cannot be empty");"##))
-                }).unwrap();
-                continue;
-            }
+    //         if cmd.clone().url.is_empty() {
+    //             wv_handle.dispatch(|wv| {
+    //                 wv.eval(&format!(r##"set_error("URL cannot be empty");"##))
+    //             }).unwrap();
+    //             continue;
+    //         }
 
-            let mut request_url = format!("{}/{}", cmd.url, cmd.path);
-            if cmd.consents.len() > 0 {
-                request_url.push_str("/");
-                request_url.push_str(&cmd.consents);
-            }
-            let send_body = cmd.clone().data;
-            let request = Request::builder()
-                                .uri(request_url.to_string())
-                                .method(cmd.clone().verb.as_str())
-                                .header("Accept", "application/json")
-                                .body(send_body).map_err(|e| format!("{:?}", e));
+    //         let mut request_url = format!("{}/{}", cmd.url, cmd.path);
+    //         if cmd.consents.len() > 0 {
+    //             request_url.push_str("/");
+    //             request_url.push_str(&cmd.consents);
+    //         }
+    //         let send_body = cmd.clone().data;
+    //         let request = Request::builder()
+    //                             .uri(request_url.to_string())
+    //                             .method(cmd.clone().verb.as_str())
+    //                             .header("Accept", "application/json")
+    //                             .body(send_body).map_err(|e| format!("{:?}", e));
 
-            let mut request_text = format!(r##"{}  {}"##, cmd.verb, request_url);
-            if !cmd.clone().data.is_empty() {
-                request_text.push_str("\n\n");
-                request_text.push_str(&cmd.data);
-            }
+    //         let mut request_text = format!(r##"{}  {}"##, cmd.verb, request_url);
+    //         if !cmd.clone().data.is_empty() {
+    //             request_text.push_str("\n\n");
+    //             request_text.push_str(&cmd.data);
+    //         }
 
-            let mut response = match request {
-                Ok(r) => match r.send() {
-                    Ok(res) => res,
-                    Err(e) => {
-                        wv_handle.dispatch(move |wv| {
-                            wv.eval(&format!(r##"set_error("{}");"##, e))
-                        }).unwrap();
-                        continue;
-                    }
-                },
-                Err(e) => {
-                    wv_handle.dispatch(move |wv| {
-                        wv.eval(&format!(r##"set_error("{}");"##, e))
-                    }).unwrap();
-                    continue;
-                }
-            };
+    //         let mut response = match request {
+    //             Ok(r) => match r.send() {
+    //                 Ok(res) => res,
+    //                 Err(e) => {
+    //                     wv_handle.dispatch(move |wv| {
+    //                         wv.eval(&format!(r##"set_error("{}");"##, e))
+    //                     }).unwrap();
+    //                     continue;
+    //                 }
+    //             },
+    //             Err(e) => {
+    //                 wv_handle.dispatch(move |wv| {
+    //                     wv.eval(&format!(r##"set_error("{}");"##, e))
+    //                 }).unwrap();
+    //                 continue;
+    //             }
+    //         };
 
-            let response_text = response.text();
+    //         let response_text = response.text();
 
-            let body = match response_text {
-                Err(e) => {
-                    wv_handle.dispatch(move |wv| {
-                        wv.eval(&format!(r##"set_error("{}");"##, e))
-                    }).unwrap();
-                    continue;
-                },
-                Ok(b) => b,
-            };
+    //         let body = match response_text {
+    //             Err(e) => {
+    //                 wv_handle.dispatch(move |wv| {
+    //                     wv.eval(&format!(r##"set_error("{}");"##, e))
+    //                 }).unwrap();
+    //                 continue;
+    //             },
+    //             Ok(b) => b,
+    //         };
 
-            info!("request_text = {:?}", request_text);
-            info!("response_text = {:?}", body);
+    //         info!("request_text = {:?}", request_text);
+    //         info!("response_text = {:?}", body);
 
-            wv_handle.dispatch(move |wv| {
-                wv.eval(&format!(r##"result_returned('{}', '{}');"##, request_text, body))
-            }).unwrap();
-        }
-    });
-    webview.run().unwrap();
+    //         wv_handle.dispatch(move |wv| {
+    //             wv.eval(&format!(r##"result_returned('{}', '{}');"##, request_text, body))
+    //         }).unwrap();
+    //     }
+    // });
+    // webview.run().unwrap();
 
 
     let opt = Opt::from_args();
